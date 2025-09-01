@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Research Agent Pro - Next-Gen Research Platform</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --primary-dark: #5a6fd8;
+            --primary-light: #8b5fbf;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --error: #f87171;
+            --bg-primary: #0f0f23;
+            --bg-secondary: #1a1a3a;
+            --bg-tertiary: #252547;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-primary: #ffffff;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.5);
+            --glow: rgba(102, 126, 234, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.02);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: 
+                radial-gradient(ellipse at top, rgba(102, 126, 234, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at bottom right, rgba(139, 95, 191, 0.15) 0%, transparent 60%),
+                radial-gradient(ellipse at bottom left, rgba(240, 147, 251, 0.1) 0%, transparent 60%),
+                linear-gradient(135deg, var(--bg-primary) 0%, #151538 50%, #1a1147 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Enhanced Background Animation */
+        .bg-animated {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.6;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            filter: blur(60px);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            top: -10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            top: 60%;
+            right: -5%;
+            animation-delay: -7s;
+        }
+
+        .orb-3 {
+            width: 250px;
+            height: 250px;
+            bottom: -5%;
+            left: 30%;
+            animation-delay: -14s;
+        }
+
+        /* Updated Navigation */
+
+        /*.nav-header {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            position: sticky;
+            top: 0;
+            transition: all 0.35s ease;
+            padding: 1rem 0;
+            
+        }*/
+
+        .nav-header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.35s ease;
+            padding: 1rem 0;
+        }
+
+        .nav-header.scrolled {
+            background: rgba(15, 15, 35, 0.9);
+            border-bottom-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(28px) saturate(200%);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Logo */
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.35rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: translateY(-2px);
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .logo-icon i {
+            color: #fff;
+            font-size: 1rem;
+            z-index: 1;
+        }
+
+        .logo-icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .logo:hover .logo-icon::before {
+            left: 100%;
+        }
+
+        .logo:hover .logo-icon {
+            transform: scale(1.05);
+            box-shadow: 0 10px 28px rgba(102, 126, 234, 0.4);
+        }
+
+        .logo-text {
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--text-primary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .profile-avatar:hover {
+            transform: scale(1.08);
+            box-shadow: 0 4px 16px rgba(139, 95, 191, 0.3);
+        }
+
+        .profile-avatar.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+
+        /* Dropdown Menu */
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 1rem);
+            right: 0;
+            min-width: 220px;
+            background: var(--bg-secondary);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .dropdown-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .dropdown-header .avatar-large {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--secondary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: 600;
+            margin: 0 auto 0.75rem;
+        }
+
+        .dropdown-header h3 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .dropdown-header p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .dropdown-item {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .dropdown-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 0.5rem 0;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 0 4rem;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, 
+                #ffffff 0%, 
+                var(--primary) 25%, 
+                var(--accent) 50%, 
+                var(--secondary) 75%, 
+                #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% 200%;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .hero-stat {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+        }
+
+        .hero-stat:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 450px 1fr;
+            gap: 4rem;
+            margin: 4rem 0;
+        }
+
+        /* Research Panel */
+        .research-panel {
+            position: sticky;
+            top: 120px;
+            height: fit-content;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .panel-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .panel-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Enhanced Form Styles */
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .form-input, .form-textarea {
+            width: 100%;
+            padding: 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-family: inherit;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Custom Select */
+        .select-wrapper {
+            position: relative;
+        }
+
+        .select-button {
+            width: 100%;
+            padding: 1.25rem 3rem 1.25rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .select-button:hover, .select-button.active {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .select-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-top: 0.5rem;
+            backdrop-filter: blur(30px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        .select-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .select-option {
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .select-option:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--text-primary);
+        }
+
+        .select-option.selected {
+            background: rgba(102, 126, 234, 0.15);
+            color: var(--primary);
+        }
+
+        /* Advanced Settings */
+        .advanced-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .settings-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 1rem 0;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .settings-content {
+            display: none;
+            padding-top: 1rem;
+        }
+
+        .settings-content.active {
+            display: block;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .setting-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateX(5px);
+        }
+
+        .setting-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Toggle Switch */
+        .toggle {
+            position: relative;
+            width: 48px;
+            height: 28px;
+        }
+
+        .toggle input {
+            display: none;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--bg-tertiary);
+            border-radius: 14px;
+            transition: 0.4s;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background: white;
+            border-radius: 50%;
+            transition: 0.4s;
+        }
+
+        .toggle input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        .toggle input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Primary Button */
+        .btn-primary {
+            width: 100%;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border: none;
+            border-radius: 16px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-primary .loading {
+            display: none;
+        }
+
+        .btn-primary.loading .loading {
+            display: block;
+        }
+
+        .btn-primary.loading .text {
+            display: none;
+        }
+
+        /* Results Area */
+        .results-area {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            min-height: 600px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .results-empty {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .results-empty i {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            opacity: 0.3;
+        }
+
+        .results-empty h3 {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            margin-bottom: 2rem;
+        }
+
+        .progress-step {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border-left: 4px solid var(--border);
+            opacity: 0.4;
+            transition: all 0.5s ease;
+        }
+
+        .progress-step.active {
+            opacity: 1;
+            background: rgba(102, 126, 234, 0.1);
+            border-left-color: var(--primary);
+            transform: translateX(8px);
+        }
+
+        .progress-step.completed {
+            opacity: 1;
+            background: rgba(74, 222, 128, 0.1);
+            border-left-color: var(--success);
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1rem;
+        }
+
+        .progress-step.active .step-icon {
+            background: var(--primary);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .progress-step.completed .step-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Content Styles */
+        .research-content {
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .research-content h2 {
+            color: var(--text-primary);
+            margin: 2rem 0 1rem 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .research-content h3 {
+            color: var(--primary);
+            margin: 1.5rem 0 0.75rem 0;
+            font-size: 1.25rem;
+        }
+
+        /* Export Buttons */
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .export-btn {
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .export-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        /* Spinner */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(30px, -30px) scale(1.1); }
+            50% { transform: translate(0, -40px) scale(0.9); }
+            75% { transform: translate(-30px, -20px) scale(1.05); }
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(102, 126, 234, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(102, 126, 234, 0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .research-panel {
+                position: static;
+            }
+            
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 0 1rem;
+            }
+            
+            .research-panel, .results-area {
+                padding: 2rem;
+                border-radius: 20px;
+            }
+            
+            .hero h1 {
+                font-size: 3rem;
+            }
+            
+            .hero-stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-container {
+                padding: 0 1rem;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            cursor: help;
+        }
+
+        .tooltip::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .tooltip:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animated">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="nav-header">
+        <div class="nav-container">
+            <!-- Logo -->
+            <a href="#" class="logo">
+                <div class="logo-icon"><i class="fas fa-brain"></i></div>
+                <span class="logo-text">AI Research Pro</span>
+            </a>
+
+            <!-- Profile Dropdown -->
+            <div class="profile-dropdown">
+                <div class="profile-avatar" id="profileAvatar">NB</div>
+                
+                <div class="dropdown-menu" id="dropdownMenu">
+                    <div class="dropdown-header">
+                        <div class="avatar-large">NB</div>
+                        <h3>NOOBS</h3>
+                        <p>Research Specialist</p>
+                    </div>
+                    
+                    <div class="dropdown-item" onclick="navigateTo('dashboard')">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </div>
+                    
+                    <div class="dropdown-item" onclick="navigateTo('history')">
+                        <i class="fas fa-history"></i>
+                        Research History
+                    </div>
+                    
+                    <div class="dropdown-item" onclick="navigateTo('library')">
+                        <i class="fas fa-book"></i>
+                        Knowledge Library
+                    </div>
+                    
+                    <div class="dropdown-item" onclick="navigateTo('templates')">
+                        <i class="fas fa-file-alt"></i>
+                        Report Templates
+                    </div>
+                    
+                    <div class="dropdown-divider"></div>
+                    
+                    <div class="dropdown-item" onclick="navigateTo('settings')">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </div>
+                    
+                    <div class="dropdown-item" onclick="navigateTo('billing')">
+                        <i class="fas fa-credit-card"></i>
+                        Billing & Usage
+                    </div>
+                    
+                    <div class="dropdown-item" onclick="navigateTo('help')">
+                        <i class="fas fa-question-circle"></i>
+                        Help & Support
+                    </div>
+                    
+                    <div class="dropdown-divider"></div>
+                    
+                    <div class="dropdown-item" onclick="logout()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Sign Out
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="main-content">
+            <h1>Next-Gen AI Research</h1>
+            <p class="hero-subtitle">
+                Transform your research workflow with intelligent automation, real-time analysis, 
+                and comprehensive insights powered by advanced AI models
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="stat-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <div class="stat-number" id="totalSearches">47K+</div>
+                    <div class="stat-label">Searches Completed</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="stat-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <div class="stat-number" id="totalSources">2.3M+</div>
+                    <div class="stat-label">Sources Analyzed</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-number" id="avgTime">2.4min</div>
+                    <div class="stat-label">Average Time</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="stat-icon">
+                        <i class="fas fa-shield-check"></i>
+                    </div>
+                    <div class="stat-number" id="accuracy">98.7%</div>
+                    <div class="stat-label">Accuracy Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-grid">
+            <!-- Research Panel -->
+            <div class="research-panel">
+                <div class="panel-title">
+                    <div class="panel-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h2>Research Configuration</h2>
+                </div>
+
+                <form id="researchForm">
+                    <div class="form-group">
+                        <label class="form-label" for="query">Research Topic</label>
+                        <textarea 
+                            class="form-textarea" 
+                            id="query" 
+                            placeholder="Enter your research question or topic..."
+                            rows="3">Impact of artificial intelligence on rural healthcare delivery and patient outcomes</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="depth">Research Depth</label>
+                        <div class="select-wrapper">
+                            <div class="select-button" id="depthSelect">
+                                <span id="depthSelected">Standard Research</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="select-dropdown" id="depthDropdown">
+                                <div class="select-option" data-value="quick">
+                                    <i class="fas fa-bolt"></i>
+                                    Quick Scan (5-10 sources)
+                                </div>
+                                <div class="select-option selected" data-value="standard">
+                                    <i class="fas fa-search"></i>
+                                    Standard Research (15-25 sources)
+                                </div>
+                                <div class="select-option" data-value="comprehensive">
+                                    <i class="fas fa-microscope"></i>
+                                    Comprehensive (30+ sources)
+                                </div>
+                                <div class="select-option" data-value="academic">
+                                    <i class="fas fa-graduation-cap"></i>
+                                    Academic Deep-Dive (50+ sources)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="model">AI Model</label>
+                        <div class="select-wrapper">
+                            <div class="select-button" id="modelSelect">
+                                <span id="modelSelected">GPT-4 Turbo</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="select-dropdown" id="modelDropdown">
+                                <div class="select-option selected" data-value="gpt4">
+                                    <i class="fas fa-robot"></i>
+                                    GPT-4 Turbo (Recommended)
+                                </div>
+                                <div class="select-option" data-value="claude">
+                                    <i class="fas fa-brain"></i>
+                                    Claude 3 Sonnet
+                                </div>
+                                <div class="select-option" data-value="gemini">
+                                    <i class="fas fa-gem"></i>
+                                    Gemini Pro
+                                </div>
+                                <div class="select-option" data-value="local">
+                                    <i class="fas fa-server"></i>
+                                    Local Model
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="format">Output Format</label>
+                        <div class="select-wrapper">
+                            <div class="select-button" id="formatSelect">
+                                <span id="formatSelected">Detailed Report</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                            <div class="select-dropdown" id="formatDropdown">
+                                <div class="select-option" data-value="executive">
+                                    <i class="fas fa-chart-line"></i>
+                                    Executive Summary
+                                </div>
+                                <div class="select-option selected" data-value="detailed">
+                                    <i class="fas fa-file-alt"></i>
+                                    Detailed Report
+                                </div>
+                                <div class="select-option" data-value="academic">
+                                    <i class="fas fa-university"></i>
+                                    Academic Paper
+                                </div>
+                                <div class="select-option" data-value="presentation">
+                                    <i class="fas fa-presentation"></i>
+                                    Presentation Slides
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Advanced Settings -->
+                    <div class="advanced-section">
+                        <div class="settings-toggle" id="advancedToggle">
+                            <span>
+                                <i class="fas fa-cog"></i>
+                                Advanced Settings
+                            </span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                        <div class="settings-content" id="advancedSettings">
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-globe"></i>
+                                    <span class="tooltip" data-tooltip="Search current web data in real-time">
+                                        Real-time Web Search
+                                    </span>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" id="realTimeSearch" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-spider"></i>
+                                    <span class="tooltip" data-tooltip="Deep crawl of web pages and documents">
+                                        Deep Web Scraping
+                                    </span>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" id="deepScraping" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-file-pdf"></i>
+                                    <span class="tooltip" data-tooltip="Analyze PDF documents and research papers">
+                                        PDF Document Analysis
+                                    </span>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" id="pdfAnalysis">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-shield-check"></i>
+                                    <span class="tooltip" data-tooltip="Verify facts across multiple sources">
+                                        Fact Verification
+                                    </span>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" id="factCheck" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-balance-scale"></i>
+                                    <span class="tooltip" data-tooltip="Detect and analyze potential bias in sources">
+                                        Bias Detection
+                                    </span>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" id="biasDetection" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="setting-item">
+                                <div class="setting-label">
+                                    <i class="fas fa-quote-right"></i>
+                                    <span class="tooltip" data-tooltip="Include proper citations and references">
+                                        Source Citations
+                                    </span>
+                                </div>
+                                <label class="toggle">
+                                    <input type="checkbox" id="citations" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="startBtn">
+                        <div class="spinner loading"></div>
+                        <div class="text">
+                            <i class="fas fa-rocket"></i>
+                            Start Research
+                        </div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Results Area -->
+            <div class="results-area">
+                <div class="panel-title">
+                    <div class="panel-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h2>Research Results</h2>
+                </div>
+
+                <div id="resultsContent">
+                    <div class="results-empty">
+                        <i class="fas fa-search-plus"></i>
+                        <h3>Ready to Begin</h3>
+                        <p>Configure your research parameters and start your intelligent research session. Our AI will analyze multiple sources, verify facts, and provide comprehensive insights.</p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 2rem; max-width: 400px; margin-left: auto; margin-right: auto;">
+                            <div style="text-align: center; padding: 1rem; background: rgba(74, 222, 128, 0.1); border-radius: 12px; border: 1px solid rgba(74, 222, 128, 0.2);">
+                                <i class="fas fa-lightning-bolt" style="color: var(--success); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                                <div style="font-size: 0.9rem; color: var(--success);">Ultra Fast</div>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(102, 126, 234, 0.1); border-radius: 12px; border: 1px solid rgba(102, 126, 234, 0.2);">
+                                <i class="fas fa-shield-alt" style="color: var(--primary); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                                <div style="font-size: 0.9rem; color: var(--primary);">Verified</div>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(240, 147, 251, 0.1); border-radius: 12px; border: 1px solid rgba(240, 147, 251, 0.2);">
+                                <i class="fas fa-microscope" style="color: var(--accent); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                                <div style="font-size: 0.9rem; color: var(--accent);">Deep Analysis</div>
+                            </div>
+                            <div style="text-align: center; padding: 1rem; background: rgba(251, 191, 36, 0.1); border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.2);">
+                                <i class="fas fa-file-export" style="color: var(--warning); font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                                <div style="font-size: 0.9rem; color: var(--warning);">Export Ready</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation scroll effect
+        window.addEventListener("scroll", () => {
+            const nav = document.querySelector(".nav-header");
+            if (window.scrollY > 20) {
+                nav.classList.add("scrolled");
+            } else {
+                nav.classList.remove("scrolled");
+            }
+        });
+
+        // Profile dropdown functionality
+        const profileAvatar = document.getElementById('profileAvatar');
+        const dropdownMenu = document.getElementById('dropdownMenu');
+
+        profileAvatar.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileAvatar.classList.toggle('active');
+            dropdownMenu.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!profileAvatar.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                profileAvatar.classList.remove('active');
+                dropdownMenu.classList.remove('active');
+            }
+        });
+
+        // Navigation functions
+        function navigateTo(page) {
+            console.log(`Navigating to: ${page}`);
+            // Add navigation logic here
+            dropdownMenu.classList.remove('active');
+            profileAvatar.classList.remove('active');
+        }
+
+        function logout() {
+            console.log('Logging out...');
+            // Add logout logic here
+            dropdownMenu.classList.remove('active');
+            profileAvatar.classList.remove('active');
+        }
+        
+        // Enhanced Custom Select Component
+        class CustomSelect {
+            constructor(selectId, dropdownId, selectedId) {
+                this.selectButton = document.getElementById(selectId);
+                this.dropdown = document.getElementById(dropdownId);
+                this.selectedSpan = document.getElementById(selectedId);
+                this.options = this.dropdown.querySelectorAll('.select-option');
+                this.value = this.getSelectedValue();
+                this.init();
+            }
+
+            init() {
+                // Toggle dropdown
+                this.selectButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.toggle();
+                });
+
+                // Option selection
+                this.options.forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.selectOption(option);
+                    });
+                });
+
+                // Close on outside click
+                document.addEventListener('click', () => {
+                    this.close();
+                });
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.close();
+                });
+            }
+
+            toggle() {
+                const isActive = this.dropdown.classList.contains('active');
+                // Close all other dropdowns first
+                document.querySelectorAll('.select-dropdown.active').forEach(dropdown => {
+                    dropdown.classList.remove('active');
+                    dropdown.previousElementSibling.classList.remove('active');
+                });
+                
+                if (!isActive) {
+                    this.open();
+                }
+            }
+
+            open() {
+                this.dropdown.classList.add('active');
+                this.selectButton.classList.add('active');
+            }
+
+            close() {
+                this.dropdown.classList.remove('active');
+                this.selectButton.classList.remove('active');
+            }
+
+            selectOption(option) {
+                // Update UI
+                this.options.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                this.selectedSpan.textContent = option.textContent.trim();
+                this.value = option.dataset.value;
+                this.close();
+                
+                // Trigger change event
+                this.selectButton.dispatchEvent(new CustomEvent('change', {
+                    detail: { value: this.value, text: option.textContent.trim() }
+                }));
+            }
+
+            getSelectedValue() {
+                const selected = this.dropdown.querySelector('.select-option.selected');
+                return selected ? selected.dataset.value : null;
+            }
+
+            getValue() {
+                return this.value;
+            }
+        }
+
+        // AI Research Agent Class
+        class AIResearchAgent {
+            constructor() {
+                this.isResearching = false;
+                this.currentStep = 0;
+                this.stats = {
+                    searches: 0,
+                    sources: 0,
+                    words: 0,
+                    trustScore: 0
+                };
+                
+                this.init();
+            }
+
+            init() {
+                // Initialize custom selects
+                this.depthSelect = new CustomSelect('depthSelect', 'depthDropdown', 'depthSelected');
+                this.modelSelect = new CustomSelect('modelSelect', 'modelDropdown', 'modelSelected');
+                this.formatSelect = new CustomSelect('formatSelect', 'formatDropdown', 'formatSelected');
+
+                // Advanced settings toggle
+                const advancedToggle = document.getElementById('advancedToggle');
+                const advancedSettings = document.getElementById('advancedSettings');
+                
+                advancedToggle.addEventListener('click', () => {
+                    const isActive = advancedSettings.classList.contains('active');
+                    advancedSettings.classList.toggle('active');
+                    const icon = advancedToggle.querySelector('i:last-child');
+                    icon.style.transform = isActive ? 'rotate(0deg)' : 'rotate(180deg)';
+                });
+
+                // Form submission
+                const form = document.getElementById('researchForm');
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.startResearch();
+                });
+
+                // Animate stats on load
+                this.animateStats();
+            }
+
+            async startResearch() {
+                if (this.isResearching) return;
+                
+                const query = document.getElementById('query').value.trim();
+                if (!query) {
+                    this.showError('Please enter a research topic');
+                    return;
+                }
+
+                this.isResearching = true;
+                const btn = document.getElementById('startBtn');
+                btn.classList.add('loading');
+                btn.disabled = true;
+
+                try {
+                    const settings = this.getResearchSettings();
+                    await this.performResearch(query, settings);
+                } catch (error) {
+                    this.showError('Research failed: ' + error.message);
+                } finally {
+                    this.isResearching = false;
+                    btn.classList.remove('loading');
+                    btn.disabled = false;
+                }
+            }
+
+            getResearchSettings() {
+                return {
+                    depth: this.depthSelect.getValue(),
+                    model: this.modelSelect.getValue(),
+                    format: this.formatSelect.getValue(),
+                    realTimeSearch: document.getElementById('realTimeSearch').checked,
+                    deepScraping: document.getElementById('deepScraping').checked,
+                    pdfAnalysis: document.getElementById('pdfAnalysis').checked,
+                    factCheck: document.getElementById('factCheck').checked,
+                    biasDetection: document.getElementById('biasDetection').checked,
+                    citations: document.getElementById('citations').checked
+                };
+            }
+
+            async performResearch(query, settings) {
+                const steps = [
+                    'Initializing AI Models',
+                    'Searching Web Sources',
+                    'Analyzing Content',
+                    'Fact Verification',
+                    'Generating Report'
+                ];
+
+                this.showProgress(steps);
+
+                // Step 1: Initialize
+                await this.delay(1500);
+                this.updateStep(0, 'completed');
+                this.updateStep(1, 'active');
+
+                // Step 2: Search
+                const sources = await this.performWebSearch(query, settings);
+                this.updateStep(1, 'completed');
+                this.updateStep(2, 'active');
+
+                // Step 3: Analyze
+                await this.delay(3000);
+                this.updateStep(2, 'completed');
+                this.updateStep(3, 'active');
+
+                // Step 4: Verify
+                if (settings.factCheck) {
+                    await this.delay(2500);
+                }
+                this.updateStep(3, 'completed');
+                this.updateStep(4, 'active');
+
+                // Step 5: Generate
+                const report = await this.generateReport(query, sources, settings);
+                this.updateStep(4, 'completed');
+
+                this.displayResults(report);
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            showProgress(steps) {
+                const resultsContent = document.getElementById('resultsContent');
+                resultsContent.innerHTML = `
+                    <div class="progress-steps">
+                        ${steps.map((step, index) => `
+                            <div class="progress-step" id="step-${index}">
+                                <div class="step-icon">
+                                    <i class="fas fa-${this.getStepIcon(index)}"></i>
+                                </div>
+                                <div class="step-content">
+                                    <div class="step-title">${step}</div>
+                                    <div class="step-description">${this.getStepDescription(index)}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div id="progressStats" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2rem;">
+                        <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+                            <div style="font-size: 1.5rem; font-weight: bold;" id="liveSearches">0</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Searches</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+                            <div style="font-size: 1.5rem; font-weight: bold;" id="liveSources">0</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Sources</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+                            <div style="font-size: 1.5rem; font-weight: bold;" id="liveWords">0</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Words</div>
+                        </div>
+                        <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.03); border-radius: 12px;">
+                            <div style="font-size: 1.5rem; font-weight: bold;" id="liveTrust">0%</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Trust Score</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Activate first step
+                this.updateStep(0, 'active');
+            }
+
+            updateStep(index, status) {
+                const step = document.getElementById(`step-${index}`);
+                if (!step) return;
+                
+                step.classList.remove('active', 'completed');
+                step.classList.add(status);
+                
+                // Update live stats
+                if (status === 'active' || status === 'completed') {
+                    this.updateLiveStats();
+                }
+            }
+
+            updateLiveStats() {
+                const searches = Math.floor(Math.random() * 50) + this.stats.searches;
+                const sources = Math.floor(Math.random() * 20) + this.stats.sources;
+                const words = Math.floor(Math.random() * 1000) + this.stats.words;
+                const trust = Math.floor(Math.random() * 10) + this.stats.trustScore;
+
+                const liveSearches = document.getElementById('liveSearches');
+                const liveSources = document.getElementById('liveSources');
+                const liveWords = document.getElementById('liveWords');
+                const liveTrust = document.getElementById('liveTrust');
+
+                if (liveSearches) {
+                    this.animateNumber(liveSearches, 0, searches, 500);
+                    this.animateNumber(liveSources, 0, sources, 700);
+                    this.animateNumber(liveWords, 0, words, 900);
+                    this.animateNumber(liveTrust, 0, Math.min(trust, 100), 600, '%');
+                }
+
+                this.stats = { searches, sources, words, trustScore: Math.min(trust, 100) };
+            }
+
+            animateNumber(element, start, end, duration, suffix = '') {
+                const range = end - start;
+                const startTime = performance.now();
+                
+                const animate = (currentTime) => {
+                    const elapsed = currentTime - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    const current = Math.floor(start + (range * progress));
+                    element.textContent = current + suffix;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    }
+                };
+                
+                requestAnimationFrame(animate);
+            }
+
+            getStepIcon(index) {
+                const icons = ['cog', 'search', 'analyze', 'shield-check', 'file-alt'];
+                return icons[index] || 'circle';
+            }
+
+            getStepDescription(index) {
+                const descriptions = [
+                    'Setting up AI models and configurations',
+                    'Scanning web sources and databases',
+                    'Processing and analyzing content',
+                    'Cross-referencing facts and sources',
+                    'Compiling comprehensive report'
+                ];
+                return descriptions[index] || '';
+            }
+
+            async performWebSearch(query, settings) {
+                const depthMap = {
+                    'quick': 8,
+                    'standard': 20,
+                    'comprehensive': 35,
+                    'academic': 55
+                };
+                
+                const sourceCount = depthMap[settings.depth] || 20;
+                return this.generateMockSources(query, sourceCount);
+            }
+
+            generateMockSources(query, count) {
+                const sources = [];
+                const domains = [
+                    'nature.com', 'nejm.org', 'thelancet.com', 'who.int',
+                    'pubmed.ncbi.nlm.nih.gov', 'ieee.org', 'acm.org',
+                    'healthaffairs.org', 'jama.jamanetwork.com'
+                ];
+                
+                for (let i = 0; i < count; i++) {
+                    sources.push({
+                        title: `Research Study ${i + 1}: ${query}`,
+                        url: `https://${domains[i % domains.length]}/study-${i + 1}`,
+                        domain: domains[i % domains.length],
+                        trust: Math.random() > 0.3 ? 'high' : 'medium',
+                        relevance: Math.random() * 0.3 + 0.7
+                    });
+                }
+                
+                return sources;
+            }
+
+            async generateReport(query, sources, settings) {
+                await this.delay(2000);
+                
+                const formatMap = {
+                    'executive': this.generateExecutiveSummary,
+                    'detailed': this.generateDetailedReport,
+                    'academic': this.generateAcademicPaper,
+                    'presentation': this.generatePresentation
+                };
+                
+                const generator = formatMap[settings.format] || this.generateDetailedReport;
+                return generator.call(this, query, sources, settings);
+            }
+
+            generateDetailedReport(query, sources, settings) {
+                const wordCount = Math.floor(Math.random() * 2000) + 3000;
+                
+                return {
+                    title: `Comprehensive Analysis: ${query}`,
+                    content: `
+                        <div class="research-content">
+                            <h2>Executive Summary</h2>
+                            <p>This comprehensive research analysis examines <strong>${query.toLowerCase()}</strong> through systematic evaluation of ${sources.length} high-quality sources from leading academic and industry publications. Our investigation reveals significant developments and emerging trends that are reshaping the landscape of this critical domain.</p>
+                            
+                            <h2>Key Findings</h2>
+                            <h3>1. Current State of Technology</h3>
+                            <p>Recent developments in artificial intelligence and machine learning have accelerated the pace of innovation across multiple sectors. The integration of advanced algorithms with existing infrastructure has demonstrated measurable improvements in efficiency and outcomes.</p>
+                            
+                            <h3>2. Impact Assessment</h3>
+                            <p>Quantitative analysis shows a 40-60% improvement in key performance metrics when compared to traditional approaches. This improvement is consistent across different implementation scenarios and organizational sizes.</p>
+                            
+                            <h3>3. Implementation Challenges</h3>
+                            <p>Despite promising results, organizations face several implementation challenges including resource allocation, technical complexity, and change management. Our analysis identifies best practices for overcoming these obstacles.</p>
+                            
+                            <h2>Detailed Analysis</h2>
+                            <h3>Methodological Approach</h3>
+                            <p>This research employed a multi-faceted approach combining quantitative data analysis, qualitative expert interviews, and systematic literature review. Sources were evaluated for credibility, relevance, and methodological rigor.</p>
+                            
+                            <h3>Evidence Quality Assessment</h3>
+                            <p>All sources underwent rigorous fact-checking and bias analysis. High-trust sources (${Math.floor(sources.filter(s => s.trust === 'high').length / sources.length * 100)}%) were prioritized in the final synthesis.</p>
+                            
+                            <h2>Future Implications</h2>
+                            <p>The trajectory of current developments suggests accelerating adoption rates and expanding applications. Organizations that invest in early implementation are likely to gain significant competitive advantages.</p>
+                            
+                            <h2>Recommendations</h2>
+                            <ul>
+                                <li>Develop comprehensive implementation strategy with clear milestones</li>
+                                <li>Invest in workforce training and development programs</li>
+                                <li>Establish monitoring and evaluation frameworks</li>
+                                <li>Foster partnerships with technology providers and research institutions</li>
+                            </ul>
+                            
+                            ${settings.citations ? this.generateCitations(sources) : ''}
+                        </div>
+                    `,
+                    wordCount,
+                    sources,
+                    trustScore: Math.floor(Math.random() * 20) + 80
+                };
+            }
+
+            generateExecutiveSummary(query, sources, settings) {
+                return {
+                    title: `Executive Summary: ${query}`,
+                    content: `
+                        <div class="research-content">
+                            <h2>Strategic Overview</h2>
+                            <p>Executive analysis of <strong>${query.toLowerCase()}</strong> based on comprehensive review of ${sources.length} authoritative sources reveals significant opportunities for organizational advancement and competitive positioning.</p>
+                            
+                            <h3>Key Strategic Insights</h3>
+                            <ul>
+                                <li><strong>Market Opportunity:</strong> Emerging trends indicate 300% growth potential over next 5 years</li>
+                                <li><strong>Competitive Advantage:</strong> Early adopters demonstrate 45% performance improvement</li>
+                                <li><strong>Risk Assessment:</strong> Implementation risks are manageable with proper planning</li>
+                                <li><strong>ROI Projection:</strong> Expected return on investment within 18-24 months</li>
+                            </ul>
+                            
+                            <h3>Immediate Action Items</h3>
+                            <ol>
+                                <li>Conduct feasibility assessment</li>
+                                <li>Allocate initial resources</li>
+                                <li>Establish project governance</li>
+                                <li>Begin stakeholder engagement</li>
+                            </ol>
+                        </div>
+                    `,
+                    wordCount: 850,
+                    sources,
+                    trustScore: 92
+                };
+            }
+
+            generateCitations(sources) {
+                const citedSources = sources.slice(0, Math.min(15, sources.length));
+                return `
+                    <h2>References</h2>
+                    <ol style="font-size: 0.9rem; line-height: 1.4;">
+                        ${citedSources.map((source, index) => `
+                            <li style="margin-bottom: 0.5rem;">
+                                ${source.title}. Retrieved from <em>${source.domain}</em>. 
+                                <span style="color: var(--text-muted);">[Trust Level: ${source.trust}]</span>
+                            </li>
+                        `).join('')}
+                    </ol>
+                `;
+            }
+
+            displayResults(report) {
+                const resultsContent = document.getElementById('resultsContent');
+                resultsContent.innerHTML = `
+                    ${report.content}
+                    
+                    <div class="export-buttons">
+                        <button class="export-btn" onclick="researchAgent.exportPDF()">
+                            <i class="fas fa-file-pdf"></i>
+                            Export PDF
+                        </button>
+                        <button class="export-btn" onclick="researchAgent.exportWord()">
+                            <i class="fas fa-file-word"></i>
+                            Export Word
+                        </button>
+                        <button class="export-btn" onclick="researchAgent.exportText()">
+                            <i class="fas fa-file-alt"></i>
+                            Export Text
+                        </button>
+                        <button class="export-btn" onclick="researchAgent.saveResearch()">
+                            <i class="fas fa-save"></i>
+                            Save Research
+                        </button>
+                    </div>
+                `;
+                
+                // Show success notification
+                this.showNotification('Research completed successfully!', 'success');
+            }
+
+            exportPDF() {
+                this.showNotification('PDF export started...', 'info');
+                setTimeout(() => {
+                    this.showNotification('PDF exported successfully!', 'success');
+                }, 1500);
+            }
+
+            exportWord() {
+                this.showNotification('Word document export started...', 'info');
+                setTimeout(() => {
+                    this.showNotification('Word document exported!', 'success');
+                }, 1500);
+            }
+
+            exportText() {
+                const content = document.querySelector('.research-content');
+                if (content) {
+                    const textContent = content.innerText;
+                    const blob = new Blob([textContent], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'research-report.txt';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    this.showNotification('Text file downloaded!', 'success');
+                }
+            }
+
+            saveResearch() {
+                this.showNotification('Research saved to your account!', 'success');
+            }
+
+            showError(message) {
+                this.showNotification(message, 'error');
+            }
+
+            showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                const colors = {
+                    success: 'var(--success)',
+                    error: 'var(--error)',
+                    info: 'var(--primary)',
+                    warning: 'var(--warning)'
+                };
+
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 2rem;
+                    right: 2rem;
+                    background: ${colors[type] || colors.info};
+                    color: white;
+                    padding: 1rem 2rem;
+                    border-radius: 12px;
+                    font-weight: 500;
+                    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+                    z-index: 10000;
+                    opacity: 0;
+                    transform: translateX(100px);
+                    transition: all 0.3s ease;
+                `;
+
+                notification.textContent = message;
+                document.body.appendChild(notification);
+
+                // Animate in
+                setTimeout(() => {
+                    notification.style.opacity = '1';
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+
+                // Remove after delay
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100px)';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 3000);
+            }
+
+            animateStats() {
+                // Animate hero stats
+                const animateCount = (element, target, suffix = '') => {
+                    let current = 0;
+                    const increment = target / 100;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            clearInterval(timer);
+                            current = target;
+                        }
+                        element.textContent = Math.floor(current) + suffix;
+                    }, 20);
+                };
+
+                setTimeout(() => {
+                    const totalSearches = document.getElementById('totalSearches');
+                    const totalSources = document.getElementById('totalSources');
+                    const avgTime = document.getElementById('avgTime');
+                    const accuracy = document.getElementById('accuracy');
+
+                    if (totalSearches) animateCount(totalSearches, 47, 'K+');
+                    if (totalSources) animateCount(totalSources, 2.3, 'M+');
+                    if (avgTime) avgTime.textContent = '2.4min';
+                    if (accuracy) animateCount(accuracy, 98.7, '%');
+                }, 1000);
+            }
+        }
+
+        // Initialize the research agent
+        const researchAgent = new AIResearchAgent();
+    </script>
+</body>
+</html>
